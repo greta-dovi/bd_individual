@@ -43,7 +43,7 @@ df = spark.read.option("header", "true")\
 #     .csv("medium_articles.csv")
 
 # Most important terms (words) per tag
-# Useful for: Build a tag recommender
+# Useful for: Build a tag recommender; EDA of text data; comparison of common word embedding techniques - bag of words and tfidf
 # Importance could be:
 # Frequency
 # TF-IDF
