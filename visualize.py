@@ -16,6 +16,7 @@ tfidfs = pd.read_csv("word_tfidf_scores_all.csv")
 tag_dist = tag_dist.loc[tag_dist["count"] > 30]
 plt.bar(tag_dist["tag"], tag_dist["count"])
 plt.xticks(rotation=90)
+plt.tight_layout()
 plt.show()
 
 five_most_frequent_tags = tag_dist.tag.tail(5).to_list()
@@ -31,10 +32,10 @@ ten_most_frequent_tags = [x.lower() for x in ten_most_frequent_tags]
 # Counts
 count_df_five = count_df3.loc[count_df3["tag"].isin(five_most_frequent_tags)]
 plt.figure(figsize=(12, 6))
-sns.barplot(data=count_df_five, x="total_count", y="word", hue="tag")
+sns.barplot(data=count_df_five, y="total_count", x="word", hue="tag")
 plt.title("Top Frequent Words per Tag")
-plt.xlabel("Frequency")
-plt.ylabel("Word")
+plt.xlabel("Word")
+plt.ylabel("Frequency")
 plt.legend(title="Tag")
 plt.tight_layout()
 plt.show()
@@ -42,10 +43,10 @@ plt.show()
 # Tfidf scores
 tfidf_df_five = tfidf_df3.loc[tfidf_df3["tag"].isin(five_most_frequent_tags)]
 plt.figure(figsize=(12, 6))
-sns.barplot(data=tfidf_df_five, x="total_tfidf", y="word", hue="tag")
+sns.barplot(data=tfidf_df_five, y="total_tfidf", x="word", hue="tag")
 plt.title("Top TFIDF Words per Tag")
-plt.xlabel("Tfidf score")
-plt.ylabel("Word")
+plt.xlabel("Word")
+plt.ylabel("Tfidf score")
 plt.legend(title="Tag")
 plt.tight_layout()
 plt.show()
@@ -115,6 +116,7 @@ print(subset_t)
 # words with high frequency, but low score - common, but not important
 # words with low frequency, but high score - rare, but distinctive
 # need the same words
+tag = "startup" 
 subset_c = counts[counts["tag"] == tag]
 subset_t = tfidfs[tfidfs["tag"] == tag]
 
