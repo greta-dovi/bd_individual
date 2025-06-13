@@ -31,7 +31,7 @@ To measure the importance of a word, it first has to be represented in the way t
 **Word count:** <br>
 It is assumed that the most frequent word for one tag, throughout all the documents sharing this tag, could be the most representative. First, Pyspark's function from `ml.feature` module `CountVectorizer` is used to convert text to sparse vectors (vector represents the count of specific words). Then the counts are aggregated, so they would represent not the most frequent words per one text, but rather the most frequent words per all the texts that share this one tag. <br>
 
-**TF-IDF**
+**TF-IDF**<br>
 TF-IDF lets to find the most representable words, meaning that the word, which appears often in one text and does not appear often in other text, gets the highest TF-IDF score. The words with highest scores then are deemed to be the most important. In order for the score to represent tags and not text, the results were also aggregated per tag. 
 
 ### Outcome
