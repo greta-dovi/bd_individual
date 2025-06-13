@@ -35,6 +35,7 @@ df = spark.read.option("header", "true")\
     .option("quote", '"')\
     .option("inferSchema", "true")\
     .csv("subset2.csv").cache()
+
 # df = spark.read.option("header", "true")\
 #     .option("multiLine", "true")\
 #     .option("escape", '"')\
@@ -42,12 +43,6 @@ df = spark.read.option("header", "true")\
 #     .option("inferSchema", "true")\
 #     .csv("medium_articles.csv")
 
-# Most important terms (words) per tag
-# Useful for: Build a tag recommender; EDA of text data; comparison of common word embedding techniques - bag of words and tfidf
-# Importance could be:
-# Frequency
-# TF-IDF
-# Topic modelling using LDA (not sure yet)
 
 # An individual assignment shall be done by students individually without someone else help. 
 # Each student presents only their solution. The assignment consists of three parts: 
@@ -66,15 +61,6 @@ df = spark.read.option("header", "true")\
 # Evaluation of the task: Correctness of the solution, amount of work done, original approach, 
 # visualization of data, or any other data or performance related to the solution, 
 # creativity (nonstandard solution, approach, problem). The best solution gets the highest grade, other solutions get a relative grade. 
-
-#_________________________________________________________________________________
-# Use pyspark
-# 1. Load and preprocess text data (tagged articles) - filter out NA, remove uneccesary columns, check value distribution, etc
-# 2. Clean & tokenize text: tokenize, lemmatize, remove stopwords
-# 3. Generate features (TF, TF-IDF, embeddings)
-# 4. Apply scalable models (e.g., LDA with MLlib) 
-# 5. Analyze topic–tag relationships | analyze the most important words per topic
-# 6. Apply everything to full dataset
 
 #_________________________________________________________________________________
 # 1. Load and preprocess text data
@@ -108,18 +94,19 @@ pdf.to_csv("tag_distribution.csv", index=False)
 
 #_________________________________________________________________________________
 # 2. Clean & tokenize text: convert to lower case, remove punctuation, 
-# tokenize, lemmatize, remove stopwords
+# tokenize, remove stopwords
 
 def clean_and_tokenize(df):
     # Converting everything to lower case
     df = df.select(F.lower(df.text).alias("text"), 
                                     F.lower(df.tag).alias("tag"))
+    # normalize all apostrophes before stopword removal
+    df = df.withColumn("text", F.regexp_replace(F.col("text"),
+        "[\u2018\u2019\u201A\u201B\u00B4\u02BB\u02B9\u02C8\u2032]", "'"))
     # Remove all that are not (^): a-z, A-Z or whitespaces
-    df = df.withColumn("cleaned_text",
-                                        F.regexp_replace(F.col("text"), r"[^a-zA-Z\s]", ""))
+    df = df.withColumn("cleaned_text", F.regexp_replace(F.col("text"), r"[^a-zA-Z\s']", ""))
     # After punctuation removal multiple whitespaces appear
-    df = df.withColumn("cleaned_text",
-                                        F.regexp_replace(F.col("cleaned_text"), r"\s+", " "))
+    df = df.withColumn("cleaned_text", F.regexp_replace(F.col("cleaned_text"), r"\s+", " "))
     # tokenize
     tokenizer = ml.Tokenizer(outputCol="tokens", inputCol="cleaned_text")
     df = tokenizer.transform(df)
@@ -131,9 +118,9 @@ def clean_and_tokenize(df):
     return df
 
 
+
 sub_exploded = clean_and_tokenize(sub_exploded)
 
-#TODO Lemmatize? 
 
 #_________________________________________________________________________________
 # 3. Generate features (TF, TF-IDF)
@@ -172,7 +159,7 @@ top_words = agg_df.withColumn("rank", F.row_number().over(window))
 p_df = top_words.toPandas()
 p_df.to_csv("word_count_all.csv", index=False)
 
-# TODO: word cloud/barplot/some interactive scatter
+
 
 # Second level - most important according to TF-IDF score
 # But this one is not aggregated, meaning that it's checking most important words per individual doc, not the group of docs
@@ -213,4 +200,3 @@ p_df.to_csv("word_tfidf_scores_all.csv", index=False)
 
 spark.stop()
 
-#TODO: generate different number of words per tag csvs for visualization
