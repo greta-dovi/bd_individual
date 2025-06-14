@@ -38,3 +38,7 @@ TF-IDF lets to find the most representable words, meaning that the word, which a
 Comparing the most important words from the 5 most frequent tags, it is visible, that TFIDF finds very unique words, that usually are not overlapping with the most important words from other tags. Such outcome is expected, since this method finds very unique words. However, that might not be desirable in the pursuit of tag recommender, since we want the tags to be associated with many similar news articles, therefore such words like "sinx" or "setd" appearing in the article might not signal that the tag is "data science". On the other hand, the most important tags according to word frequency are more comprehensible, therefore the tag "data science" is associated with words "data", "AI" and "learning". <br>
 However, while being less interpretable, TFIDF offers less overlapping important words per topic,  which might lead to more accurate tag suggestion. <br>
 Additionally, it is useful to investigate the relationship between TFIDF scores and word frequencies from the NLP tools perspective. There is an inverse relationship between these two metrics - the word that is very frequent in tag has a low TFIDF score and vice versa - the word, which is less frequent, has very high TFIDF score. Which essentially is the core meaning of TFIDF. 
+
+### Code
+Run `important_words.py` to generate the csv files with the most important words. <br>
+Run `visualize.py` to make the visualizations for analysis. 
